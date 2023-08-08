@@ -8,6 +8,7 @@ import (
 	"context"
 	"flag"
 	"github.com/emorydu/log"
+	"time"
 )
 
 var (
@@ -38,12 +39,25 @@ func main() {
 		DisableCaller:    true,
 		OutputPaths:      []string{"test.log", "stdout"},
 		ErrorOutputPaths: []string{"error.log"},
+		Cutter:           nil,
 	}
+	/*
+		tips: Use the log split by size feature, uncomment this comment
+
+		opts.Cutter = &lumberjack.Logger{
+			Filename:   opts.OutputPaths[0],
+			MaxSize:    1,
+			MaxAge:     3,
+			MaxBackups: 30,
+			Compress:   false,
+		}
+	*/
 
 	// Initialize the global logger
 	log.Init(opts)
 	defer log.Flush()
 
+	time.Sleep(5 * time.Second)
 	// Debug, Info(with filed), Warnf, Errorw
 	log.Debug("This is a debug message")
 	log.Info("This is info message", log.Int32("int_key", 10))

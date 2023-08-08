@@ -238,21 +238,32 @@ func New(opts *Options) *zapLogger {
 	}
 
 	var err error
-	l, err := loggerConfig.Build(zap.AddStacktrace(zapcore.PanicLevel), zap.AddCallerSkip(1))
-	if err != nil {
-		panic(err)
+
+	var zplog *zap.Logger
+	if opts.Cutter != nil {
+		opts.check()
+		zplog = zap.New(
+			zapcore.NewCore(
+				zapcore.NewJSONEncoder(zap.NewDevelopmentEncoderConfig()),
+				zapcore.AddSync(opts.Cutter),
+				zapLevel,
+			))
+	} else {
+		zplog, err = loggerConfig.Build(zap.AddStacktrace(zapcore.PanicLevel), zap.AddCallerSkip(1))
+		if err != nil {
+			panic(err)
+		}
 	}
 	logger := &zapLogger{
-		zapLogger: l.Named(opts.Name),
+		zapLogger: zplog.Named(opts.Name),
 		infoLogger: infoLogger{
-			log:   l,
+			log:   zplog,
 			level: zap.InfoLevel,
 		},
 	}
 
-	klog.InitLogger(l)
-	zap.RedirectStdLog(l)
-
+	klog.InitLogger(zplog)
+	zap.RedirectStdLog(zplog)
 	return logger
 }
 

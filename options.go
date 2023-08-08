@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/pflag"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"strings"
 )
 
@@ -30,15 +31,16 @@ const (
 
 // Options defines configuration items related to log.
 type Options struct {
-	OutputPaths       []string `json:"output-paths" mapstructure:"output-paths"`
-	ErrorOutputPaths  []string `json:"error-output-paths" mapstructure:"error-output-paths"`
-	Level             string   `json:"level" mapstructure:"level"`
-	Format            string   `json:"format" mapstructure:"format"`
-	DisableCaller     bool     `json:"disable-caller" mapstructure:"disable-caller"`
-	DisableStacktrace bool     `json:"disable-stacktrace" mapstructure:"disable-stacktrace"`
-	EnableColor       bool     `json:"enable-color" mapstructure:"enable-color"`
-	Development       bool     `json:"development" mapstructure:"development"`
-	Name              string   `json:"name" mapstructure:"name"`
+	OutputPaths       []string           `json:"output-paths" mapstructure:"output-paths"`
+	ErrorOutputPaths  []string           `json:"error-output-paths" mapstructure:"error-output-paths"`
+	Level             string             `json:"level" mapstructure:"level"`
+	Format            string             `json:"format" mapstructure:"format"`
+	DisableCaller     bool               `json:"disable-caller" mapstructure:"disable-caller"`
+	DisableStacktrace bool               `json:"disable-stacktrace" mapstructure:"disable-stacktrace"`
+	EnableColor       bool               `json:"enable-color" mapstructure:"enable-color"`
+	Development       bool               `json:"development" mapstructure:"development"`
+	Name              string             `json:"name" mapstructure:"name"`
+	Cutter            *lumberjack.Logger `json:"cutter" mapstructure:"cutter"`
 }
 
 // NewOptions creates an Options object with default parameters.
@@ -145,4 +147,15 @@ func (o *Options) Build() error {
 	zap.ReplaceGlobals(logger)
 
 	return nil
+}
+
+// check checking the legitimacy of the output file location.
+func (o *Options) check() {
+	for i, v := range o.OutputPaths {
+		if v == "stdout" {
+			if i == 0 {
+				panic("Standard output cannot be the first element of an array")
+			}
+		}
+	}
 }

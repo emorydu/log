@@ -7,6 +7,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.1
 	go.uber.org/zap v1.25.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	k8s.io/klog v1.0.0
 )
 
@@ -19,3 +20,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace go.uber.org/zap v1.25.0 => ./third_party/forked/zap
