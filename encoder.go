@@ -1,0 +1,20 @@
+// Copyright 2023 Emory.Du <orangeduxiaocheng@gmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+package log
+
+import (
+	"go.uber.org/zap/zapcore"
+	"time"
+)
+
+const timeFormat = "2006-01-02 15:04:05.000"
+
+func timeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+	enc.AppendString(t.Format(timeFormat))
+}
+
+func milliSecondsDurationEncoder(d time.Duration, enc zapcore.PrimitiveArrayEncoder) {
+	enc.AppendFloat64(float64(d) / float64(time.Millisecond))
+}
