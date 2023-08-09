@@ -13,6 +13,7 @@
 - 支持结构化日志记录。
 - **兼容标准库 `log` 包和 `glog`**。
 - **支持Context（业务定制）**
+- **支持Cutter （日志拆分）**
 
 ## 使用方法
 
@@ -115,12 +116,49 @@ func main() {
 }
 ```
 
+
 执行如上代码：
 
 ```bash
 $ go run v_level.go 
 2020-12-05 08:20:37.763	info	example/v_level.go:10	This is a V level message
 2020-12-05 08:20:37.763	info	example/v_level.go:11	This is a V level message with fields	{"X-Request-ID": "7a7b9f24-4cae-4b2a-9464-69088b45b904"}
+```
+
+## 支持日志拆分
+
+创建 `cutter.go`，内容如下：
+
+```go
+func main() {
+    opts := &log.Options{
+        OutputPaths:      []string{"cutter.log"},
+        ErrorOutputPaths: []string{"error.log"},
+        Level:            "debug",
+        Format:           "console",
+        Name:             "test",
+    }
+    opts.Cutter = &lumberjack.Logger{
+        Filename:   opts.OutputPaths[0],
+        MaxSize:    1, // 单位M
+        MaxAge:     3,
+        MaxBackups: 30,
+        Compress:   false, // 是否压缩
+    }
+    l := log.New(opts)
+    for i := 0; i < 10000; i++ {
+        l.Info("Info message")
+        l.Debug("Debug message")
+        l.Error("Error message")
+    }
+}
+```
+
+执行如上代码
+
+```bash
+go run cutter.go
+# 会产生按照大小分割的日志文件
 ```
 
 ## 完整的示例
