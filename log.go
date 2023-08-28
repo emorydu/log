@@ -244,7 +244,7 @@ func New(opts *Options) *zapLogger {
 		opts.check()
 		zplog = zap.New(
 			zapcore.NewCore(
-				zapcore.NewJSONEncoder(zap.NewDevelopmentEncoderConfig()),
+				zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
 				zapcore.AddSync(opts.Cutter),
 				zapLevel,
 			))
