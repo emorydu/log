@@ -21,4 +21,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace go.uber.org/zap v1.25.0 => ./third_party/forked/zap
+//replace go.uber.org/zap v1.25.0 => ./third_party/forked/zap
